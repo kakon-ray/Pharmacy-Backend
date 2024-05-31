@@ -54,12 +54,6 @@ class RegController extends Controller
                     'name' => $request->name,
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
-                    'image' => "https://t.ly/xxkam",
-                    'last_login' => "not set",
-                    'phone' => '01707500512',
-                    'date' => $date,
-                    'time' => $time,
-                    'status' => 1,
                 ]);
 
                 if ($user) {
@@ -109,38 +103,18 @@ class RegController extends Controller
                     'email' => $userBasic->email,
                     'password' => $userBasic->password,
                     'email_verified_at' => Carbon::now(),
-                    'image' => "https://t.ly/xxkam",
-                    'last_login' => "not set",
-                    'phone' => '01707500512',
-                    'date' => $userBasic->date,
-                    'time' => $userBasic->time,
-                    'status' => 1,
                 ]);
 
                 if ($user) {
                     $deleteToken = DB::table('email_verifications')->where('token', $request->token)->where('email', $request->email)->delete();
                     $deleteUserBsicTemp = UserbasicTemp::where('email', $request->email)->delete();
 
-                    $user_info = DB::table('user_basic')->where('email', $request->email,)->first();
-
-                    $UserDetailsData = array(
-                        'user_basic_id' => $user_info->id,
-                        'first_name' => "not set",
-                        'last_name' => "not set",
-                        'birthday' => "not set",
-                        'phone_number' => "not set",
-                        'gender' => "not set",
-                        'address' => "not set",
-                        'date' => $user_info->date,
-                        'time' => $user_info->time,
-                        'status' => 1,
-                    );
-
-                    DB::table('user_details')->insert($UserDetailsData);
-
-                    return response()->json([
-                        'msg' => 'Your email is verified',
-                    ]);
+                    if($deleteToken && $deleteUserBsicTemp){
+                        return response()->json([
+                            'msg' => 'Your email is verified',
+                        ]);
+                    }
+                   
                 }
             } catch (\Exception $err) {
                 return response()->json([

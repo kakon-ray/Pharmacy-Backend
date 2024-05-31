@@ -16,18 +16,10 @@ return new class extends Migration
         Schema::create('user_basic', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->string('phone')->nullable();
             $table->string('email')->unique();
-            $table->string('google_id')->nullable()->unique();
-            $table->string('facebook_id')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->text('remember_token')->nullable();
-            $table->string('image')->nullable();
-            $table->string('last_login')->nullable();
-            $table->string('date')->nullable();
-            $table->string('time')->nullable();
-            $table->integer('status')->nullable();
             $table->timestamps();
         });
     }

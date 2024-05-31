@@ -13,13 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('medicines', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('number');
-            $table->text('desc');
+            $table->string('medicine_name');
+            $table->string('category');
+            $table->string('brand_name');
+            $table->string('purchase_date');
+            $table->string('price');
+            $table->string('expired_date');
+            $table->string('stock');
             $table->timestamps();
         });
+
     }
 
     /**
@@ -29,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('medicines');
     }
 };

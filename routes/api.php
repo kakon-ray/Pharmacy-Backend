@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ClientDashboard;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PasswordResetRequestController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RegController;
 use App\Http\Controllers\SocialiteController;
 use Illuminate\Http\Request;
@@ -17,8 +17,8 @@ Route::post('/new-password', [PasswordResetRequestController::class, 'new_passwo
 
 // login and registration and check
 Route::post('/sign_up', [RegController::class, 'regisign_upster'])->name('sign_up');
-Route::post('/user_login', [ClientDashboard::class, 'login'])->name('user_login');
-Route::get('/product', [ProductController::class, 'product'])->name('product');
+Route::post('/user_login', [LoginController::class, 'login'])->name('user_login');
+
 
 // verification email
 Route::post('/email-verified', [RegController::class, 'email_verified'])->name('email_verified');
@@ -28,9 +28,15 @@ Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($ro
     Route::get('/me', [AuthController::class, 'me'])->name('me');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
-    Route::post('/product/add', [ProductController::class, 'product_add'])->name('product_add');
-    Route::post('/product/edit', [ProductController::class, 'product_edit'])->name('product_edit');
-    Route::post('/product/delete', [ProductController::class, 'product_delete'])->name('product_delete');
+
+
+    Route::get('/medicine', [MedicineController::class, 'medicine'])->name('medicine');
+    Route::get('/medicine/getitem/{id}', [MedicineController::class, 'medicine_get_item'])->name('medicine_get_item');
+    Route::post('/medicine/add', [MedicineController::class, 'medicine_add'])->name('medicine_add');
+    Route::post('/medicine/edit', [MedicineController::class, 'medicine_edit'])->name('medicine_edit');
+    Route::get('/medicine/delete/{id}', [MedicineController::class, 'medicine_delete'])->name('medicine_delete');
+
+
 });
 
 

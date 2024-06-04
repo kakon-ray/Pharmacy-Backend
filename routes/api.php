@@ -25,7 +25,7 @@ Route::post('/email-verified', [RegController::class, 'email_verified'])->name('
 
 
 Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($router) {
-    Route::get('/me', [AuthController::class, 'me'])->name('me');
+    Route::get('/me/{token}', [AuthController::class, 'me'])->name('me');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
 

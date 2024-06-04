@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserBasic;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -60,10 +61,20 @@ class AuthController extends Controller
     }
 
  
-    public function me()
+    public function me(Request $request)
     {
-        
-        return response()->json($this->guard()->user());
+        if($request->token){
+            $user = UserBasic::where('remember_token',$request->token)->first();
+            if($user){
+                return response()->json(['user' => $user]);
+            }else{
+                return response()->json(['error' => 'Unauthenticated User']);
+            }
+            
+        }else{
+            return response()->json(['error' => 'Unauthenticated User']);
+        }
+
     }
 
     public function logout()

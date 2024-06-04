@@ -44,10 +44,7 @@ class EmailVerificationNotification extends Notification
     {
         return (new MailMessage)
                     ->subject('Verify Email Address')
-                    ->line("Dear $notifiable->name")
-                    ->line('Please Verify Your Email and Login')
-                    ->action('Verify Your Email', $this->url)
-                    ->line('Thank you for using our Website');
+                    ->markdown('auth.email_verified', ['url' => $this->url]);
     }
 
     /**

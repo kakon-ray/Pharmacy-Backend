@@ -59,7 +59,7 @@ class RegController extends Controller
                 if ($user) {
                     $this->service->sendVerificationLink($user);
                     return response()->json([
-                        'msg' => 'Signup Completed Please verify your email',
+                        'success' => 'Signup Completed Please verify your email',
                     ]);
                 } else {
                     return response()->json([

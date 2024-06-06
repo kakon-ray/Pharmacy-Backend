@@ -6,6 +6,7 @@ use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PasswordResetRequestController;
 use App\Http\Controllers\RegController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\UserManageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +37,7 @@ Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($ro
     Route::post('/medicine/edit', [MedicineController::class, 'medicine_edit'])->name('medicine_edit');
     Route::get('/medicine/delete/{id}', [MedicineController::class, 'medicine_delete'])->name('medicine_delete');
 
-
+    Route::get('/userinfo', [UserManageController::class, 'get_user']);
 });
 
 

@@ -23,12 +23,15 @@ class PasswordResetRequestController extends Controller
 
         $usere_check = UserBasic::where('email', $request->email)->count();
 
-        if($usere_check){
+        if ($usere_check) {
 
             $already_maild = DB::table('password_resets')->where('email', $request->email)->count();
 
-            if($already_maild){
-                return response()->json(['msg' => 'Already send this email']);
+            if ($already_maild) {
+                return response()->json([
+                    'msg' => 'Already send this email',
+                    'success' => false
+                ]);
             }
 
             $token = Str::random(64);
@@ -38,46 +41,60 @@ class PasswordResetRequestController extends Controller
                 'token' => $token,
                 'created_at' => Carbon::now(),
             ]);
-    
+
             Mail::send('auth.mailforget', ['token' => $token], function ($message) use ($request) {
                 $message->to($request->email);
                 $message->subject('Reset Password');
             });
-    
-            return response()->json(['msg' => 'Send Email']);
-        }else{
-            return response()->json(['msg' => 'User Not Found']);
-        }
 
+            return response()->json([
+                'msg' => 'Password Reset Email Send',
+                'success' => true
+            ]);
+        } else {
+            return response()->json([
+                'msg' => 'User Not Found',
+                'success' => false
+            ]);
+        }
     }
 
-    function show_reset_password_form($token){
+    function show_reset_password_form($token)
+    {
         // return redirect('http://localhost:3000/reset-password/?token=' . $token);
-        return redirect('http://localhost:3000/admin/passwordreset/resetform/?token=' . $token);
+        return redirect('http://localhost:3000/password/reset/submit-form?token=' . $token);
     }
 
     function new_password_submit(Request $request)
     {
         // return response()->json($request->all());
 
-        $request->validate([
-            'email' => 'required|email|exists:user_basic',
-            'password' => 'required|string|min:8|',
-            'confirm_password' => 'required',
-        ]);
+        $user_check = UserBasic::where('email', $request->email)->count();
 
-        $updatepassword = DB::table('password_resets')->where('email',$request->email,)->where('token',$request->token)->first();
+        if ($user_check) {
+            $updatepassword = DB::table('password_resets')->where('email', $request->email,)->where('token', $request->token)->first();
 
-        if (!$updatepassword) {
-            return response()->json(['error' => 'Invalid']);
-        } else {
-            $responce = UserBasic::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
+            if (!$updatepassword) {
+                return response()->json([
+                    'msg' => 'Invalid',
+                    'success' => false,
+                ]);
+            } else {
+                $responce = UserBasic::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
 
-            if ($responce) {
-                DB::table('password_resets')->where('email', $request->email)->delete();
-                return response()->json(['success' => 'Password Reset Successfully']);
+                if ($responce) {
+                    DB::table('password_resets')->where('email', $request->email)->delete();
+                    return response()->json([
+                        'msg' => 'Password Reset Successfully',
+                        'success' => true,
+                    ]);
+                }
             }
+        } else {
+            return response()->json([
+                'msg' => 'Unauthorized User',
+                'success' => false
+            ]);
         }
     }
-
 }

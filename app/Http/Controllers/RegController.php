@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Customs\Services\EmailVerificationService;
 use App\Models\Admin;
+use App\Models\EmailVerification;
 use App\Models\User;
 use App\Models\UserBasic;
 use App\Models\UserbasicTemp;
@@ -83,48 +84,56 @@ class RegController extends Controller
 
     function email_verified(Request $request)
     {
+        date_default_timezone_set('Asia/Dhaka');
+
         $already_email_verification = UserBasic::where('email', $request->email)->whereNotNull('email_verified_at')->count();
 
-        if($already_email_verification){
+        if ($already_email_verification) {
             return response()->json([
-                'success' => 'Your email is verified',
+                'msg' => 'Already email is verified',
+                'success' => true,
             ]);
-        }
+        } else {
 
-        $exist_token = DB::table('email_verifications')->where('token', $request->token)->where('email', $request->email)->count();
+            $exist_token = EmailVerification::where('token', $request->token)->where('email', $request->email)->first();
+            $now = Carbon::now();
 
-        if ($exist_token) {
+            if ($now->greaterThan($exist_token->expired_at)) {
 
-            $userBasic = UserbasicTemp::where('email', $request->email)->first();
+                $deleteToken = DB::table('email_verifications')->where('token', $request->token)->where('email', $request->email)->delete();
+                $deleteUserBsicTemp = UserbasicTemp::where('email', $request->email)->delete();
 
-            try {
-                $user = UserBasic::create([
-                    'name' => $userBasic->name,
-                    'email' => $userBasic->email,
-                    'password' => $userBasic->password,
-                    'email_verified_at' => Carbon::now(),
+                return response()->json([
+                    'msg' => 'Your Token is expired please signup again',
+                    'success' => false,
                 ]);
+            } else {
 
-                if ($user) {
-                    $deleteToken = DB::table('email_verifications')->where('token', $request->token)->where('email', $request->email)->delete();
-                    $deleteUserBsicTemp = UserbasicTemp::where('email', $request->email)->delete();
+                $userBasic = UserbasicTemp::where('email', $request->email)->first();
 
-                    if($deleteToken && $deleteUserBsicTemp){
+                try {
+                    $user = UserBasic::create([
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'email_verified_at' => Carbon::now(),
+                        'password' => Hash::make($request->password),
+                    ]);
+
+                    if ($user) {
+                        $deleteToken = DB::table('email_verifications')->where('token', $request->token)->where('email', $request->email)->delete();
+                        $deleteUserBsicTemp = UserbasicTemp::where('email', $request->email)->delete();
+
                         return response()->json([
                             'msg' => 'Your email is verified',
+                            'success' => true,
                         ]);
                     }
-                   
+                } catch (\Exception $err) {
+                    return response()->json([
+                        'error' => $err,
+                    ]);
                 }
-            } catch (\Exception $err) {
-                return response()->json([
-                    'error' => $err,
-                ]);
             }
-        }else {
-            return response()->json([
-                'msg' => 'Token is expired',
-            ]);
         }
     }
 }

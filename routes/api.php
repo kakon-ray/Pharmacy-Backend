@@ -38,6 +38,8 @@ Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($ro
     Route::get('/medicine/delete/{id}', [MedicineController::class, 'medicine_delete'])->name('medicine_delete');
 
     Route::get('/userinfo', [UserManageController::class, 'get_user']);
+    Route::get('/userpermission/{id}', [UserManageController::class, 'userpermission']);
+    Route::get('/canclepermission/{id}', [UserManageController::class, 'canclepermission']);
 });
 
 

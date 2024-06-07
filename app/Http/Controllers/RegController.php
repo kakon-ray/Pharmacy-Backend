@@ -113,10 +113,10 @@ class RegController extends Controller
 
                 try {
                     $user = UserBasic::create([
-                        'name' => $request->name,
-                        'email' => $request->email,
+                        'name' => $userBasic->name,
+                        'email' => $userBasic->email,
                         'email_verified_at' => Carbon::now(),
-                        'password' => Hash::make($request->password),
+                        'password' => $userBasic->password,
                     ]);
 
                     if ($user) {

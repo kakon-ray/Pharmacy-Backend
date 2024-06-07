@@ -15,7 +15,7 @@ class UserManageController extends Controller
     public function get_user(Request $request)
     {
 
-        $all_user = UserBasic::where('role', 'user')->get();
+        $all_user = UserBasic::get();
 
         if ($all_user) {
             return response()->json([
@@ -28,5 +28,56 @@ class UserManageController extends Controller
                 'success' => false,
             ]);
         }
+    }
+
+
+    public function userpermission(Request $request)
+    {
+        $user = UserBasic::find($request->id);
+        if(!$user){
+            return response()->json([
+                'msg' => 'User not found',
+                'success' => false,
+            ]);
+        }else{
+            $user->role = 'admin';
+        }
+      
+        $responce = $user->save();
+
+        if($responce){
+            $all_user = UserBasic::get();
+            return response()->json([
+                'msg' => 'Permission Sucessfully',
+                'users' => $all_user,
+                'success' => true,
+            ]);
+        }
+        
+    }
+
+    public function canclepermission(Request $request)
+    {
+        $user = UserBasic::find($request->id);
+        if(!$user){
+            return response()->json([
+                'msg' => 'User not found',
+                'success' => false,
+            ]);
+        }else{
+            $user->role = 'user';
+        }
+      
+        $responce = $user->save();
+        
+        if($responce){
+            $all_user = UserBasic::get();
+            return response()->json([
+                'msg' => 'Permission Cancle Sucessfully',
+                'users' => $all_user,
+                'success' => true,
+            ]);
+        }
+
     }
 }

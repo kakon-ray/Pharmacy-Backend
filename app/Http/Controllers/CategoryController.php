@@ -31,15 +31,15 @@ class CategoryController extends Controller
     public function category_add(Request $request)
     {
 
-
-        $category = Category::where('category_slug', $request->category_slug)->count();
+        $slug = Str::slug($request->category_name, '-');
+        $category = Category::where('category_slug', $slug)->count();
 
         if ($category) {
             return response()->json(['error' => 'Already Add this Category']);
         } else {
 
             try {
-                $slug = Str::slug($request->category_slug, '-');
+
                 $category = Category::create([
                     'category_name' => $request->category_name,
                     'category_slug' => $slug,
@@ -106,47 +106,56 @@ class CategoryController extends Controller
     {
 
         $category = Category::find($request->id);
-    
-        if (is_null($category)) {
-          return response()->json([
-            'msg' => "Do not find any category",
-            'success' => false
-          ]);
-        } else {
-    
-          $validator = Validator::make($request->all(), [
-            'category_name' => 'required',
-            'category_slug' => 'required',
 
-          ]);
-    
-          if ($validator->fails()) {
-            return response()->json($validator->errors());
-          } else {
-    
-            try {
-                $slug = Str::slug($request->category_slug, '-');
-              $category->category_name =  $request->category_name;
-              $category->category_slug =  $slug;
-              $category->save();
-    
-            } catch (\Exception $err) {
-              $category = null;
-            }
-    
-            if ($category != null) {
-              return response()->json([
-                'msg' => 'Updated category',
-                'success' => true,
+        if (is_null($category)) {
+            return response()->json([
+                'msg' => "Do not find any category",
+                'success' => false
             ]);
+        } else {
+
+            $validator = Validator::make($request->all(), [
+                'category_name' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors());
             } else {
-              return response()->json([
-                'msg' => 'Internal Server Error',
-                'success' => false,
-                'err_msg' => $err->getMessage()
-              ]);
+         
+
+                try {
+
+                    $slug = Str::slug($request->category_name, '-');
+                    $category = Category::where('category_slug', $slug)->count();
+    
+                    if ($category) {
+                        return response()->json([
+                            'msg' => 'Already exists this category',
+                            'success' => false,
+                        ]);
+                    }
+
+                    $category->category_name =  $request->category_name;
+                    $category->category_slug =  $slug;
+                    $category->save();
+
+                } catch (\Exception $err) {
+                    $category = null;
+                }
+
+                if ($category != null) {
+                    return response()->json([
+                        'msg' => 'Updated category',
+                        'success' => true,
+                    ]);
+                } else {
+                    return response()->json([
+                        'msg' => 'Internal Server Error',
+                        'success' => false,
+                        'err_msg' => $err->getMessage()
+                    ]);
+                }
             }
-          }
         }
-      }
+    }
 }

@@ -21,10 +21,14 @@ class MedicineController extends Controller
   {
 
     $medicine = Medicine::with('category')->with('company')->get();
+    $categories = Category::all();
+    $companyes = MedicineCompany::all();
 
     if ($medicine->count() != 0) {
       return response()->json([
         'medicine' => $medicine,
+        'categories' => $categories,
+        'companyes' => $companyes,
       ]);
     } else {
       return response()->json([
@@ -78,9 +82,16 @@ class MedicineController extends Controller
   {
 
     $medicine = Medicine::where('id',$request->id)->first();
+    $categories = Category::all();
+    $companyes = MedicineCompany::all();
 
     if ($medicine != null) {
-      return response()->json(['medicine' => $medicine]);
+      return response()->json([
+        'medicine' => $medicine,
+        'categories' => $categories,
+        'companyes' => $companyes,
+      ]);
+
     } else {
       return response()->json([
         'msg' => 'No Product',

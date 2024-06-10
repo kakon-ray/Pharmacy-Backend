@@ -45,16 +45,17 @@ class CategoryController extends Controller
                     'category_slug' => $slug,
                 ]);
 
-                if ($category != null) {
-                    return response()->json(['success' => 'Save This Category']);
-                } else {
-                    return response()->json([
-                        'msg' => 'Internal Server Error',
-                        'err_msg' => $err->getMessage()
-                    ], 500);
-                }
             } catch (\Exception $err) {
                 $category = null;
+            }
+            
+            if ($category != null) {
+                return response()->json(['success' => 'Save This Category']);
+            } else {
+                return response()->json([
+                    'msg' => 'Internal Server Error',
+                    'err_msg' => $err->getMessage()
+                ], 500);
             }
         }
     }
@@ -105,9 +106,9 @@ class CategoryController extends Controller
     public function category_edit(Request $request)
     {
 
-        $category = Category::find($request->id);
+        $categorys = Category::find($request->id);
 
-        if (is_null($category)) {
+        if (is_null($categorys)) {
             return response()->json([
                 'msg' => "Do not find any category",
                 'success' => false
@@ -126,24 +127,24 @@ class CategoryController extends Controller
                 try {
 
                     $slug = Str::slug($request->category_name, '-');
-                    $category = Category::where('category_slug', $slug)->count();
+                    $check_category = Category::where('category_slug', $slug)->count();
     
-                    if ($category) {
+                    if ($check_category) {
                         return response()->json([
                             'msg' => 'Already exists this category',
                             'success' => false,
                         ]);
                     }
 
-                    $category->category_name =  $request->category_name;
-                    $category->category_slug =  $slug;
-                    $category->save();
+                    $categorys->category_name =  $request->category_name;
+                    $categorys->category_slug =  $slug;
+                    $categorys->save();
 
                 } catch (\Exception $err) {
-                    $category = null;
+                    $categorys = null;
                 }
 
-                if ($category != null) {
+                if ($categorys != null) {
                     return response()->json([
                         'msg' => 'Updated category',
                         'success' => true,

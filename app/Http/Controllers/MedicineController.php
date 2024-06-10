@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Medicine;
+use App\Models\MedicineCompany;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -18,10 +20,12 @@ class MedicineController extends Controller
   public function medicine(Request $request)
   {
 
-    $medicine = Medicine::all();
+    $medicine = Medicine::with('category')->with('company')->get();
 
     if ($medicine->count() != 0) {
-      return response()->json(['medicine' => $medicine]);
+      return response()->json([
+        'medicine' => $medicine,
+      ]);
     } else {
       return response()->json([
         'msg' => 'No Product',
@@ -43,8 +47,8 @@ class MedicineController extends Controller
 
         $medicine = Medicine::create([
           'medicine_name' => $request->medicine_name,
-          'category' => $request->category,
-          'brand_name' => $request->brand_name,
+          'category_id' => $request->category_id,
+          'company_id' => $request->company_id,
           'purchase_date' => $request->purchase_date,
           'price' => $request->price,
           'expired_date' => $request->expired_date,
@@ -57,16 +61,21 @@ class MedicineController extends Controller
 
       if ($medicine != null) {
         return response()->json(['success' => 'Save This Medicine']);
-      } else {
+      }
+      
+      else {
         return response()->json([
           'msg' => 'Internal Server Error',
           'err_msg' => $err->getMessage()
-        ], 500);
+        ]);
       }
+
+
     }
   }
 
-  public function medicine_get_item(Request $request){
+  public function medicine_get_item(Request $request)
+  {
 
     $medicine = Medicine::where('id',$request->id)->first();
 
@@ -89,13 +98,13 @@ class MedicineController extends Controller
       return response()->json([
         'error' => "Do not Find any Medicine",
         'status' => 404
-      ], 404);
+      ]);
     } else {
 
       $validator = Validator::make($request->all(), [
         'medicine_name' => 'required',
-        'category' => 'required',
-        'brand_name' => 'required',
+        'category_id' => 'required',
+        'company_id' => 'required',
         'purchase_date' => 'required',
         'price' => 'required',
         'expired_date' => 'required',
@@ -103,14 +112,14 @@ class MedicineController extends Controller
       ]);
 
       if ($validator->fails()) {
-        return response()->json($validator->errors(), 400);
+        return response()->json($validator->errors());
       } else {
 
         try {
 
           $medicine->medicine_name =  $request->medicine_name;
-          $medicine->category =  $request->category;
-          $medicine->brand_name =  $request->brand_name;
+          $medicine->category_id =  $request->category_id;
+          $medicine->company_id =  $request->company_id;
           $medicine->purchase_date =  $request->purchase_date;
           $medicine->price =  $request->price;
           $medicine->expired_date =  $request->expired_date;
@@ -122,12 +131,12 @@ class MedicineController extends Controller
         }
 
         if ($medicine != null) {
-          return response()->json(['success' => 'Updated Medicine'], 200);
+          return response()->json(['success' => 'Updated Medicine']);
         } else {
           return response()->json([
             'error' => 'Internal Server Error',
             'err_msg' => $err->getMessage()
-          ], 500);
+          ]);
         }
       }
     }

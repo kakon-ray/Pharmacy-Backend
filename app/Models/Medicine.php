@@ -9,14 +9,23 @@ class Medicine extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
+        'category_id',
+        'company_id',
         'medicine_name',
-        'category',
-        'brand_name',
         'purchase_date',
         'price',
         'expired_date',
         'stock',
     ];
+
+    public function category(){
+        return $this->belongsTo(Category::class,'category_id');
+    }
+
+    public function company(){
+        return $this->belongsTo(MedicineCompany::class,'company_id');
+    }
+
+
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PasswordResetRequestController;
@@ -30,6 +31,15 @@ Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($ro
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
 
+    // manage category
+    Route::get('/category', [CategoryController::class, 'category'])->name('category');
+    Route::get('/category/getitem/{id}', [CategoryController::class, 'category_get_item'])->name('category_get_item');
+    Route::post('/category/add', [CategoryController::class, 'category_add'])->name('category_add');
+    Route::post('/category/edit', [CategoryController::class, 'category_edit'])->name('category_edit');
+    Route::get('/category/delete/{id}', [CategoryController::class, 'category_delete'])->name('category_delete');
+
+
+    // manage medicine
 
     Route::get('/medicine', [MedicineController::class, 'medicine'])->name('medicine');
     Route::get('/medicine/getitem/{id}', [MedicineController::class, 'medicine_get_item'])->name('medicine_get_item');

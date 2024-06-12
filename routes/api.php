@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PasswordResetRequestController;
@@ -37,6 +38,13 @@ Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($ro
     Route::post('/category/add', [CategoryController::class, 'category_add'])->name('category_add');
     Route::post('/category/edit', [CategoryController::class, 'category_edit'])->name('category_edit');
     Route::get('/category/delete/{id}', [CategoryController::class, 'category_delete'])->name('category_delete');
+   
+    // manage company
+    Route::get('/company', [CompanyController::class, 'company'])->name('company');
+    Route::get('/company/getitem/{id}', [CompanyController::class, 'company_get_item'])->name('company_get_item');
+    Route::post('/company/add', [CompanyController::class, 'company_add'])->name('company_add');
+    Route::post('/company/edit', [CompanyController::class, 'company_edit'])->name('company_edit');
+    Route::get('/company/delete/{id}', [CompanyController::class, 'company_delete'])->name('company_delete');
 
 
     // manage medicine
@@ -46,6 +54,7 @@ Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($ro
     Route::post('/medicine/add', [MedicineController::class, 'medicine_add'])->name('medicine_add');
     Route::post('/medicine/edit', [MedicineController::class, 'medicine_edit'])->name('medicine_edit');
     Route::get('/medicine/delete/{id}', [MedicineController::class, 'medicine_delete'])->name('medicine_delete');
+
 
     Route::get('/userinfo', [UserManageController::class, 'get_user']);
     Route::get('/userpermission/{id}', [UserManageController::class, 'userpermission']);

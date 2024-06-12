@@ -44,7 +44,10 @@ class MedicineController extends Controller
       $exists_medicine = Medicine::where('medicine_name',$request->medicine_name)->count();
 
     if ($exists_medicine) {
-      return response()->json(['error' => 'Already Add this Medicine']);
+      return response()->json([
+        'msg' => 'Already Add this Medicine',
+        'status'=> false
+      ]);
     } else {
 
       try {
@@ -64,12 +67,16 @@ class MedicineController extends Controller
       }
 
       if ($medicine != null) {
-        return response()->json(['success' => 'Save This Medicine']);
+        return response()->json([
+          'msg' => 'Save This Medicine',
+          'status' => true
+        ]);
       }
       
       else {
         return response()->json([
           'msg' => 'Internal Server Error',
+          'status'=>false,
           'err_msg' => $err->getMessage()
         ]);
       }

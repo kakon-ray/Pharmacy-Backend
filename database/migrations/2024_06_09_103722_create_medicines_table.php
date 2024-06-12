@@ -19,7 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id');
             $table->string('medicine_name')->nullable();
             $table->string('purchase_date')->nullable();
-            $table->string('price')->nullable();
+            $table->decimal('purchase_price')->default();
+            $table->decimal('selling_price')->default();
             $table->string('expired_date')->nullable();
             $table->string('stock')->nullable();
             $table->timestamps();

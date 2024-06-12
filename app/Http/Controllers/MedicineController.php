@@ -57,7 +57,8 @@ class MedicineController extends Controller
           'category_id' => $request->category_id,
           'company_id' => $request->company_id,
           'purchase_date' => $request->purchase_date,
-          'price' => $request->price,
+          'purchase_price' => $request->purchase_price,
+          'selling_price' => $request->selling_price,
           'expired_date' => $request->expired_date,
           'stock' => $request->stock,
         ]);
@@ -124,7 +125,8 @@ class MedicineController extends Controller
         'category_id' => 'required',
         'company_id' => 'required',
         'purchase_date' => 'required',
-        'price' => 'required',
+        'purchase_price' => 'required',
+        'selling_price' => 'required',
         'expired_date' => 'required',
         'stock' => 'required',
       ]);
@@ -139,7 +141,8 @@ class MedicineController extends Controller
           $medicine->category_id =  $request->category_id;
           $medicine->company_id =  $request->company_id;
           $medicine->purchase_date =  $request->purchase_date;
-          $medicine->price =  $request->price;
+          $medicine->purchase_price =  $request->purchase_price;
+          $medicine->selling_price =  $request->selling_price;
           $medicine->expired_date =  $request->expired_date;
           $medicine->stock =  $request->stock;
           $medicine->save();

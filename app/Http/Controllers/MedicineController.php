@@ -46,7 +46,7 @@ class MedicineController extends Controller
     if ($exists_medicine) {
       return response()->json([
         'msg' => 'Already Add this Medicine',
-        'status'=> false
+        'success'=> false
       ]);
     } else {
 
@@ -69,14 +69,14 @@ class MedicineController extends Controller
       if ($medicine != null) {
         return response()->json([
           'msg' => 'Save This Medicine',
-          'status' => true
+          'success' => true
         ]);
       }
       
       else {
         return response()->json([
           'msg' => 'Internal Server Error',
-          'status'=>false,
+          'success'=>false,
           'err_msg' => $err->getMessage()
         ]);
       }
@@ -188,5 +188,26 @@ class MedicineController extends Controller
         ], 500);
       }
     }
+  }
+
+
+  public function get_company_category(Request $request)
+  {
+
+    $categories = Category::all();
+    $companyes = MedicineCompany::all();
+
+    if (!is_null($categories) || is_null($companyes)) {
+      return response()->json([
+        'categories' => $categories,
+        'companyes' => $companyes,
+      ]);
+
+    } else {
+      return response()->json([
+        'msg' => 'No Category and Company',
+      ]);
+    }
+
   }
 }

@@ -37,7 +37,10 @@ class CompanyController extends Controller
         $company = MedicineCompany::where('company_slug', $slug)->count();
 
         if ($company) {
-            return response()->json(['error' => 'Already add this company']);
+            return response()->json([
+                'success' => false,
+                'msg' => 'Already add this company'
+            ]);
         } else {
 
             try {
@@ -52,10 +55,14 @@ class CompanyController extends Controller
             }
             
             if ($createCompany != null) {
-                return response()->json(['success' => 'Save this company']);
+                return response()->json([
+                    'success'=>true,
+                    'msg' => 'Save this company'
+                ]);
             } else {
                 return response()->json([
                     'msg' => 'Internal Server Error',
+                    'success'=>false,
                     'err_msg' => $err->getMessage()
                 ], 500);
             }
@@ -64,27 +71,32 @@ class CompanyController extends Controller
 
     public function company_delete(Request $request)
     {
-        $category = Category::find($request->id);
+        $company = MedicineCompany::find($request->id);
 
-        if (is_null($category)) {
+        if (is_null($company)) {
             return response()->json([
-                'error' => "Do not find any category",
-                'status' => 404
+                'error' => "Do not find any Company",
+                'success' => false
             ], 404);
         } else {
 
             try {
 
-                $category->delete();
+                $company->delete();
+     
             } catch (\Exception $err) {
                 $category = null;
             }
 
-            if ($category != null) {
-                return response()->json(['success' => 'Deleted this category']);
+            if ($company != null) {
+                return response()->json([
+                    'success' => true,
+                    'msg' => 'Deleted this Company'
+                ]);
             } else {
                 return response()->json([
                     'error' => 'Internal Server Error',
+                    'success' => false,
                     'err_msg' => $err->getMessage()
                 ], 500);
             }

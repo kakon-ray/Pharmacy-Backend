@@ -35,45 +35,61 @@ class MedicineController extends Controller
         'msg' => 'No Product',
       ]);
     }
+  
   }
 
   public function medicine_add(Request $request)
   {
 
-    try {
+      $exists_medicine = Medicine::where('medicine_name',$request->medicine_name)->count();
 
-      $medicine = Medicine::create([
-        'medicine_name' => $request->medicine_name,
-        'category_id' => $request->category_id,
-        'company_id' => $request->company_id,
-        'purchase_date' => $request->purchase_date,
-        'purchase_price' => $request->purchase_price,
-        'selling_price' => $request->selling_price,
-        'expired_date' => $request->expired_date,
-        'stock' => $request->stock,
-      ]);
-    } catch (\Exception $err) {
-      $medicine = null;
-    }
-
-    if ($medicine != null) {
+    if ($exists_medicine) {
       return response()->json([
-        'msg' => 'Save This Medicine',
-        'success' => true
+        'msg' => 'Already Add this Medicine',
+        'success'=> false
       ]);
     } else {
-      return response()->json([
-        'msg' => 'Internal Server Error',
-        'success' => false,
-        'err_msg' => $err->getMessage()
-      ]);
+
+      try {
+
+        $medicine = Medicine::create([
+          'medicine_name' => $request->medicine_name,
+          'category_id' => $request->category_id,
+          'company_id' => $request->company_id,
+          'purchase_date' => $request->purchase_date,
+          'purchase_price' => $request->purchase_price,
+          'selling_price' => $request->selling_price,
+          'expired_date' => $request->expired_date,
+          'stock' => $request->stock,
+        ]);
+
+      } catch (\Exception $err) {
+        $medicine = null;
+      }
+
+      if ($medicine != null) {
+        return response()->json([
+          'msg' => 'Save This Medicine',
+          'success' => true
+        ]);
+      }
+      
+      else {
+        return response()->json([
+          'msg' => 'Internal Server Error',
+          'success'=>false,
+          'err_msg' => $err->getMessage()
+        ]);
+      }
+
+
     }
   }
 
   public function medicine_get_item(Request $request)
   {
 
-    $medicine = Medicine::where('id', $request->id)->first();
+    $medicine = Medicine::where('id',$request->id)->first();
     $categories = Category::all();
     $companyes = MedicineCompany::all();
 
@@ -83,11 +99,13 @@ class MedicineController extends Controller
         'categories' => $categories,
         'companyes' => $companyes,
       ]);
+
     } else {
       return response()->json([
         'msg' => 'No Product',
       ]);
     }
+
   }
 
   public function medicine_edit(Request $request)
@@ -128,6 +146,7 @@ class MedicineController extends Controller
           $medicine->expired_date =  $request->expired_date;
           $medicine->stock =  $request->stock;
           $medicine->save();
+
         } catch (\Exception $err) {
           $medicine = null;
         }
@@ -144,7 +163,7 @@ class MedicineController extends Controller
     }
   }
 
-
+  
   public function medicine_delete(Request $request)
   {
     $medicine = Medicine::find($request->id);
@@ -186,10 +205,12 @@ class MedicineController extends Controller
         'categories' => $categories,
         'companyes' => $companyes,
       ]);
+
     } else {
       return response()->json([
         'msg' => 'No Category and Company',
       ]);
     }
+
   }
 }

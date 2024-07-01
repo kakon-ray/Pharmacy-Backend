@@ -17,4 +17,8 @@ class Category extends Model
     public function medicine(){
         return $this->hasMany(Medicine::class,'category_id');
     }
+
+    public function order(){
+        return $this->hasMany(Order::class,'medicine_id');
+    }
 }

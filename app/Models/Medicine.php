@@ -28,5 +28,9 @@ class Medicine extends Model
         return $this->belongsTo(MedicineCompany::class,'company_id');
     }
 
+    public function order(){
+        return $this->hasMany(Order::class,'medicine_id');
+    }
+
 
 }

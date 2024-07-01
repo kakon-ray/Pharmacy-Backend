@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+
+    use HasFactory;
+
     protected $fillable = [
         'category_id',
         'company_id',
@@ -18,5 +21,17 @@ class Order extends Model
         'expired_date',
     ];
 
-    use HasFactory;
+
+    public function medicine(){
+        return $this->belongsTo(Medicine::class,'medicine_id');
+    }
+
+    public function category(){
+        return $this->belongsTo(Category::class,'category_id');
+    }
+
+    public function company(){
+        return $this->belongsTo(MedicineCompany::class,'company_id');
+    }
+
 }

@@ -137,6 +137,24 @@ class MedicineController extends Controller
     }
   }
 
+
+
+  public function order_get(Request $request)
+  {
+    $orders = Order::orderBy('created_at', 'desc')->with('medicine')->with('category')->with('company')->get();
+
+    if ($orders != null) {
+      return response()->json([
+        'orders' => $orders,
+      ]);
+    } else {
+      return response()->json([
+        'msg' => 'No Orders',
+      ]);
+    }
+  }
+
+
   public function medicine_get_item(Request $request)
   {
 

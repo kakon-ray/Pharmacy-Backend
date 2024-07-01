@@ -56,7 +56,8 @@ Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($ro
     Route::get('/medicine/delete/{id}', [MedicineController::class, 'medicine_delete'])->name('medicine_delete');
     Route::get('/get/company/category', [MedicineController::class, 'get_company_category'])->name('get_company_category');
 
-    Route::post('/order', [MedicineController::class, 'order_submit'])->name('medicine');
+    Route::post('/order', [MedicineController::class, 'order_submit'])->name('order');
+    Route::get('/getorder', [MedicineController::class, 'order_get'])->name('get.order');
 
     // user management
     Route::get('/userinfo', [UserManageController::class, 'get_user']);

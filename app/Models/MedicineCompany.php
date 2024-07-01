@@ -18,4 +18,8 @@ class MedicineCompany extends Model
     public function medicine(){
         return $this->hasMany(Medicine::class,'company_id');
     }
+
+    public function order(){
+        return $this->hasMany(Order::class,'medicine_id');
+    }
 }

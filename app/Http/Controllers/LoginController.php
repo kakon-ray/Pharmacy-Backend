@@ -47,6 +47,7 @@ class LoginController extends Controller
                     'success' => true,
                     'message' => 'Login Success',
                     'token' => $token,
+                    'role'=>$UserBasic->role,
                     'id' => $UserBasic->id,
                     'name' => $UserBasic->name,
                     'email' => $UserBasic->email,

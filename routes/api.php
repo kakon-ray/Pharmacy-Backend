@@ -28,6 +28,8 @@ Route::post('/email-verified', [RegController::class, 'email_verified'])->name('
 
 
 Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($router) {
+    Route::get('/dashboard/data', [MedicineController::class, 'dashboard'])->name('dashboard');
+
     Route::get('/me/{token}', [AuthController::class, 'me'])->name('me');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
@@ -58,6 +60,8 @@ Route::group(['middleware' => ['jwt.role:userbasic', 'jwt.auth']], function ($ro
 
     Route::post('/order', [MedicineController::class, 'order_submit'])->name('order');
     Route::get('/getorder', [MedicineController::class, 'order_get'])->name('get.order');
+
+
 
     // user management
     Route::get('/userinfo', [UserManageController::class, 'get_user']);

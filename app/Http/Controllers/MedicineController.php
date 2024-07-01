@@ -7,6 +7,7 @@ use App\Models\Medicine;
 use App\Models\MedicineCompany;
 use App\Models\Order;
 use App\Models\Product;
+use Faker\Provider\Medical;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -152,6 +153,25 @@ class MedicineController extends Controller
         'msg' => 'No Orders',
       ]);
     }
+  }
+
+  public function dashboard(Request $request)
+  {
+    $medicineCount = Medicine::count();
+    $brandCount = MedicineCompany::count();
+    $categoryCount = Category::count();
+    $orderCount = Order::count();
+    $sellOrderCount = Order::where('order_type','sell')->count();
+    $purchaseOrderCount = Order::where('order_type','buy')->count();
+
+    return response()->json([
+      'medicineCount' => $medicineCount,
+      'orderCount' => $orderCount,
+      'sellOrderCount' => $sellOrderCount,
+      'purchaseOrderCount' => $purchaseOrderCount,
+      'categoryCount' => $categoryCount,
+      'brandCount' => $brandCount,
+    ]);
   }
 
 

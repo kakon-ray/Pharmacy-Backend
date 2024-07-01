@@ -665,8 +665,7 @@
                                                                         style="font-size: 18px; line-height: 28.8px;">Thanks,</span>
                                                                 </p>
                                                                 <p style="line-height: 160%; font-size: 14px; text-align: center;"><span
-                                                                        style="font-size: 18px; line-height: 28.8px;">The
-                                                                        Enbobyte Ltd</span></p>
+                                                                        style="font-size: 18px; line-height: 28.8px;">স্কলার ক্লিনিক</span></p>
                                                             </div>
 
                                                         </td>

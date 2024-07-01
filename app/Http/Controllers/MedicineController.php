@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Medicine;
 use App\Models\MedicineCompany;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MedicineController extends Controller
@@ -35,18 +37,17 @@ class MedicineController extends Controller
         'msg' => 'No Product',
       ]);
     }
-  
   }
 
   public function medicine_add(Request $request)
   {
 
-      $exists_medicine = Medicine::where('medicine_name',$request->medicine_name)->count();
+    $exists_medicine = Medicine::where('medicine_name', $request->medicine_name)->count();
 
     if ($exists_medicine) {
       return response()->json([
         'msg' => 'Already Add this Medicine',
-        'success'=> false
+        'success' => false
       ]);
     } else {
 
@@ -62,7 +63,6 @@ class MedicineController extends Controller
           'expired_date' => $request->expired_date,
           'stock' => $request->stock,
         ]);
-
       } catch (\Exception $err) {
         $medicine = null;
       }
@@ -72,24 +72,75 @@ class MedicineController extends Controller
           'msg' => 'Save This Medicine',
           'success' => true
         ]);
-      }
-      
-      else {
+      } else {
         return response()->json([
           'msg' => 'Internal Server Error',
-          'success'=>false,
+          'success' => false,
           'err_msg' => $err->getMessage()
         ]);
       }
+    }
+  }
 
+  public function order_submit(Request $request)
+  {
 
+    $exists_medicine = Medicine::where('id', $request->medicine_id)->count();
+
+    if ($exists_medicine) {
+
+      try {
+        DB::beginTransaction();
+
+        $ordersubmit = Order::create([
+          'category_id' => $request->category_id,
+          'company_id' => $request->company_id,
+          'medicine_id' => $request->medicine_id,
+          'order_type' => $request->order_type,
+          'quantity' => $request->quantity,
+          'purchase_price' => $request->purchasePrice,
+          'selling_price' => $request->sellingPrice,
+          'expired_date' => $request->expired_date,
+        ]);
+
+        if ($ordersubmit) {
+          $medicine = Medicine::find($request->medicine_id);
+          $medicine->selling_price = $request->totalSellingPrice;
+          $medicine->purchase_price = $request->totalPurchasePrice;
+          $medicine->stock = $request->totalQuantity;
+          $medicine->save();
+        }
+
+        DB::commit();
+      } catch (\Exception $err) {
+        $medicine = null;
+      }
+
+      if ($medicine != null) {
+        return response()->json([
+          'msg' => 'Order Completed',
+          'success' => true
+        ]);
+      } else {
+        return response()->json([
+          'msg' => 'Internal Server Error',
+          'success' => false,
+          'err_msg' => $err->getMessage()
+        ]);
+      }
+    } else {
+
+      return response()->json([
+        'msg' => 'Do not found any medicine',
+        'success' => false
+      ]);
     }
   }
 
   public function medicine_get_item(Request $request)
   {
 
-    $medicine = Medicine::where('id',$request->id)->first();
+    $medicine = Medicine::where('id', $request->id)->first();
     $categories = Category::all();
     $companyes = MedicineCompany::all();
 
@@ -99,13 +150,11 @@ class MedicineController extends Controller
         'categories' => $categories,
         'companyes' => $companyes,
       ]);
-
     } else {
       return response()->json([
         'msg' => 'No Product',
       ]);
     }
-
   }
 
   public function medicine_edit(Request $request)
@@ -146,7 +195,6 @@ class MedicineController extends Controller
           $medicine->expired_date =  $request->expired_date;
           $medicine->stock =  $request->stock;
           $medicine->save();
-
         } catch (\Exception $err) {
           $medicine = null;
         }
@@ -163,7 +211,7 @@ class MedicineController extends Controller
     }
   }
 
-  
+
   public function medicine_delete(Request $request)
   {
     $medicine = Medicine::find($request->id);
@@ -205,12 +253,10 @@ class MedicineController extends Controller
         'categories' => $categories,
         'companyes' => $companyes,
       ]);
-
     } else {
       return response()->json([
         'msg' => 'No Category and Company',
       ]);
     }
-
   }
 }

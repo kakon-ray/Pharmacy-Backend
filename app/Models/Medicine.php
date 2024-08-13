@@ -14,6 +14,7 @@ class Medicine extends Model
         'company_id',
         'medicine_name',
         'purchase_date',
+        'purchase_price_pice',
         'purchase_price',
         'selling_price',
         'expired_date',

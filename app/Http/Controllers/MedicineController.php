@@ -43,41 +43,6 @@ class MedicineController extends Controller
   public function medicine_add(Request $request)
   {
 
-    $arrayRequest = [
-      'medicine_name' => $request->medicine_name,
-      'category_id' => $request->category_id,
-      'company_id' => $request->company_id,
-      'purchase_date' => $request->purchase_date,
-      'purchase_price' => $request->purchase_price,
-      'expired_date' => $request->expired_date,
-      'stock' => $request->stock,
-    ];
-
-    $arrayValidate  = [
-      'medicine_name' => 'required',
-      'category_id' => 'required',
-      'company_id' => 'required',
-      'purchase_date' => 'required',
-      'purchase_price' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
-      'expired_date' => 'required',
-      'stock' => 'required|integer',
-    ];
-
-    $response = Validator::make($arrayRequest, $arrayValidate);
-
-    if ($response->fails()) {
-      $msg = '';
-      foreach ($response->getMessageBag()->toArray() as $item) {
-        $msg = $item;
-      };
-
-      return response()->json([
-        'success' => false,
-        'msg' => $msg[0]
-      ]);
-    }
-
-
     $exists_medicine = Medicine::where('medicine_name', $request->medicine_name)->count();
 
     if ($exists_medicine) {
@@ -94,6 +59,7 @@ class MedicineController extends Controller
           'category_id' => $request->category_id,
           'company_id' => $request->company_id,
           'purchase_date' => $request->purchase_date,
+          'purchase_price_pice' => $request->purchase_price_pice,
           'purchase_price' => $request->purchase_price,
           'selling_price' => $request->selling_price,
           'expired_date' => $request->expired_date,
@@ -101,6 +67,11 @@ class MedicineController extends Controller
         ]);
       } catch (\Exception $err) {
         $medicine = null;
+        return response()->json([
+          'msg' => 'Internal Server Error',
+          'success' => false,
+          'err_msg' => $err->getMessage()
+        ]);
       }
 
       if ($medicine != null) {
@@ -108,52 +79,12 @@ class MedicineController extends Controller
           'msg' => 'Save This Medicine',
           'success' => true
         ]);
-      } else {
-        return response()->json([
-          'msg' => 'Internal Server Error',
-          'success' => false,
-          'err_msg' => $err->getMessage()
-        ]);
       }
     }
   }
 
   public function order_submit(Request $request)
   {
-    $arrayRequest = [
-      'category_id' => $request->category_id,
-      'company_id' => $request->company_id,
-      'medicine_id' => $request->medicine_id,
-      'order_type' => $request->order_type,
-      'quantity' => $request->quantity,
-      'purchase_price' => $request->purchasePrice,
-      'selling_price' => $request->sellingPrice,
-      'expired_date' => $request->expired_date,
-  ];
-
-  $arrayValidate  = [
-      'category_id' => 'required',
-      'company_id' => 'required',
-      'medicine_id' => 'required',
-      'order_type' => 'required',
-      'quantity' => 'required|integer',
-      'purchase_price' => 'numeric|regex:/^\d+(\.\d{1,2})?$/',
-      'selling_price' => 'numeric|regex:/^\d+(\.\d{1,2})?$/',
-  ];
-
-  $response = Validator::make($arrayRequest, $arrayValidate);
-
-  if ($response->fails()) {
-      $msg = '';
-      foreach ($response->getMessageBag()->toArray() as $item) {
-          $msg = $item;
-      };
-
-      return response()->json([
-          'success' => false,
-          'msg' => $msg[0]
-      ]);
-  }
 
     $exists_medicine = Medicine::where('id', $request->medicine_id)->count();
 
@@ -268,74 +199,57 @@ class MedicineController extends Controller
   {
 
 
-    $arrayRequest = [
-      'medicine_name' => $request->medicine_name,
-      'category_id' => $request->category_id,
-      'company_id' => $request->company_id,
-      'purchase_date' => $request->purchase_date,
-      'purchase_price' => $request->purchase_price,
-      'expired_date' => $request->expired_date,
-      'stock' => $request->stock,
-    ];
-
-    $arrayValidate  = [
-      'medicine_name' => 'required',
-      'category_id' => 'required',
-      'company_id' => 'required',
-      'purchase_date' => 'required',
-      'purchase_price' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
-      'expired_date' => 'required',
-      'stock' => 'required|integer',
-    ];
-
-    $response = Validator::make($arrayRequest, $arrayValidate);
-
-    if ($response->fails()) {
-      $msg = '';
-      foreach ($response->getMessageBag()->toArray() as $item) {
-        $msg = $item;
-      };
-
-      return response()->json([
-        'success' => false,
-        'msg' => $msg[0]
-      ]);
-    }
-
     $medicine = Medicine::find($request->id);
 
     if (is_null($medicine)) {
       return response()->json([
-        'success' => false,
-        'msg' => 'Do not Find any Medicine'
+        'msg' => 'Do not find any madeicine',
+        'success' => false
       ]);
     } else {
 
-      try {
+      $validator = Validator::make($request->all(), [
+        'medicine_name' => 'required',
+        'category_id' => 'required',
+        'company_id' => 'required',
+        'purchase_date' => 'required',
+        'purchase_price' => 'required',
+        'selling_price' => 'required',
+        'expired_date' => 'required',
+        'stock' => 'required',
+      ]);
 
-        $medicine->medicine_name =  $request->medicine_name;
-        $medicine->category_id =  $request->category_id;
-        $medicine->company_id =  $request->company_id;
-        $medicine->purchase_date =  $request->purchase_date;
-        $medicine->purchase_price =  $request->purchase_price;
-        $medicine->selling_price =  $request->selling_price;
-        $medicine->expired_date =  $request->expired_date;
-        $medicine->stock =  $request->stock;
-        $medicine->save();
-      } catch (\Exception $err) {
-        $medicine = null;
-      }
-
-      if ($medicine != null) {
-        return response()->json([
-          'success' => true,
-          'msg' => 'Updated Medicine'
-        ]);
+      if ($validator->fails()) {
+        return response()->json($validator->errors());
       } else {
-        return response()->json([
-          'success' => false,
-          'msg' => 'Internal Server Error'
-        ]);
+
+        try {
+
+          $medicine->medicine_name =  $request->medicine_name;
+          $medicine->category_id =  $request->category_id;
+          $medicine->company_id =  $request->company_id;
+          $medicine->purchase_date =  $request->purchase_date;
+          $medicine->purchase_price_pice =  $request->purchase_price_pice;
+          $medicine->purchase_price =  $request->purchase_price;
+          $medicine->selling_price =  $request->selling_price;
+          $medicine->expired_date =  $request->expired_date;
+          $medicine->stock =  $request->stock;
+          $medicine->save();
+        } catch (\Exception $err) {
+          $medicine = null;
+          return response()->json([
+            'error' => 'Internal Server Error',
+            'success' => false,
+            'err_msg' => $err->getMessage()
+          ]);
+        }
+
+        if ($medicine != null) {
+          return response()->json([
+            'msg' => 'Medicine update successfully',
+            'success' => true
+          ]);
+        }
       }
     }
   }

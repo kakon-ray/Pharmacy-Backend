@@ -30,36 +30,12 @@ class CategoryController extends Controller
 
     public function category_add(Request $request)
     {
-        $arrayRequest = [
-            'category_name' => $request->category_name,
-        ];
-
-        $arrayValidate  = [
-            'category_name' => 'required',
-        ];
-
-        $response = Validator::make($arrayRequest, $arrayValidate);
-
-        if ($response->fails()) {
-            $msg = '';
-            foreach ($response->getMessageBag()->toArray() as $item) {
-                $msg = $item;
-            };
-
-            return response()->json([
-                'success' => false,
-                'msg' => $msg[0]
-            ]);
-        }
 
         $slug = Str::slug($request->category_name, '-');
         $category = Category::where('category_slug', $slug)->count();
 
         if ($category) {
-            return response()->json([
-                'success' => false,
-                'msg' => 'Already Add this Category'
-            ]);
+            return response()->json(['error' => 'Already Add this Category']);
         } else {
 
             try {
@@ -74,15 +50,12 @@ class CategoryController extends Controller
             }
             
             if ($category != null) {
-                return response()->json([
-                    'success' => true,
-                    'msg' => 'Category Submited'
-                ]);
+                return response()->json(['success' => 'Save This Category']);
             } else {
                 return response()->json([
-                    'success' => false,
-                    'msg' => 'Internal Server Error'
-                ]);
+                    'msg' => 'Internal Server Error',
+                    'err_msg' => $err->getMessage()
+                ], 500);
             }
         }
     }
@@ -133,28 +106,6 @@ class CategoryController extends Controller
     public function category_edit(Request $request)
     {
 
-        $arrayRequest = [
-            'category_name' => $request->category_name,
-        ];
-
-        $arrayValidate  = [
-            'category_name' => 'required',
-        ];
-
-        $response = Validator::make($arrayRequest, $arrayValidate);
-
-        if ($response->fails()) {
-            $msg = '';
-            foreach ($response->getMessageBag()->toArray() as $item) {
-                $msg = $item;
-            };
-
-            return response()->json([
-                'success' => false,
-                'msg' => $msg[0]
-            ]);
-        }
-
         $categorys = Category::find($request->id);
 
         if (is_null($categorys)) {
@@ -163,6 +114,15 @@ class CategoryController extends Controller
                 'success' => false
             ]);
         } else {
+
+            $validator = Validator::make($request->all(), [
+                'category_name' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors());
+            } else {
+         
 
                 try {
 
@@ -197,6 +157,6 @@ class CategoryController extends Controller
                     ]);
                 }
             }
-        
+        }
     }
 }

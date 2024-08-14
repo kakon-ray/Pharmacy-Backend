@@ -17,6 +17,7 @@ class Medicine extends Model
         'purchase_price_pice',
         'purchase_price',
         'selling_price',
+        'selling_price_pice',
         'expired_date',
         'stock',
     ];

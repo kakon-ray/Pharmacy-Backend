@@ -62,6 +62,7 @@ class MedicineController extends Controller
           'purchase_price_pice' => $request->purchase_price_pice,
           'purchase_price' => $request->purchase_price,
           'selling_price' => $request->selling_price,
+          'selling_price_pice' => $request->selling_price_pice,
           'expired_date' => $request->expired_date,
           'stock' => $request->stock,
         ]);
@@ -232,6 +233,7 @@ class MedicineController extends Controller
           $medicine->purchase_price_pice =  $request->purchase_price_pice;
           $medicine->purchase_price =  $request->purchase_price;
           $medicine->selling_price =  $request->selling_price;
+          $medicine->selling_price_pice =  $request->selling_price_pice;
           $medicine->expired_date =  $request->expired_date;
           $medicine->stock =  $request->stock;
           $medicine->save();

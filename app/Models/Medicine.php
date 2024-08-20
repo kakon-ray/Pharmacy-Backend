@@ -20,6 +20,7 @@ class Medicine extends Model
         'selling_price_pice',
         'expired_date',
         'stock',
+        'toal_stock',
     ];
 
     public function category(){

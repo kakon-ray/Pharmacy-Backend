@@ -25,6 +25,7 @@ return new class extends Migration
             $table->decimal('selling_price_pice')->default();
             $table->string('expired_date')->nullable();
             $table->string('stock')->nullable();
+            $table->string('toal_stock')->nullable();
             $table->timestamps();
     
         });

@@ -65,6 +65,7 @@ class MedicineController extends Controller
           'selling_price_pice' => $request->selling_price_pice,
           'expired_date' => $request->expired_date,
           'stock' => $request->stock,
+          'toal_stock' => $request->toal_stock,
         ]);
       } catch (\Exception $err) {
         $medicine = null;
@@ -110,6 +111,7 @@ class MedicineController extends Controller
           $medicine->selling_price = $request->totalSellingPrice;
           $medicine->purchase_price = $request->totalPurchasePrice;
           $medicine->stock = $request->totalQuantity;
+          $medicine->toal_stock = $request->totalStockQuantity;
           $medicine->save();
         }
 
@@ -218,6 +220,7 @@ class MedicineController extends Controller
         'selling_price' => 'required',
         'expired_date' => 'required',
         'stock' => 'required',
+        'toal_stock' => 'required',
       ]);
 
       if ($validator->fails()) {
@@ -236,6 +239,7 @@ class MedicineController extends Controller
           $medicine->selling_price_pice =  $request->selling_price_pice;
           $medicine->expired_date =  $request->expired_date;
           $medicine->stock =  $request->stock;
+          $medicine->toal_stock =  $request->toal_stock;
           $medicine->save();
         } catch (\Exception $err) {
           $medicine = null;
